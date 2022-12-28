@@ -28,9 +28,8 @@ class PaymentController extends ApiController
 
     }
 
-    public function postPayment(PaymentRequest $request, ProductUserRepo $productUserRepo, CardRepo $cardRepo, PaymentRepo $paymentRepo)
+    public function postPayment(PaymentRequest $request, PaymentRepo $paymentRepo)
     {
-
 
         $productId = $request->productId;
         $cardNumber = $request->card_number;
@@ -38,26 +37,11 @@ class PaymentController extends ApiController
         $userId = $request->userId;
 
 
-        if (!VerifyPaymentTimeService::get($userId)) {
-
-            return response()->json(['message' => 'زمان 1 دقیقه شما به پایان رسیده', "data" => $userId], 400);
-
+        if (VerifyPaymentTimeService::get($userId) === null) {
+            return response()->json(['message' => 'زمان '.\Gate\Models\Payment::getMinute().' دقیقه شما به پایان رسیده', "data" => $userId], 400);
         }
 
-        if ($productUserRepo->find($productId) && $cardRepo->getCard($cardNumber, $cardcvv2)) {
-            $productPrice = $productUserRepo->getProductPrice($productId);
-            $cardInventory = $cardRepo->getCardInventory($cardNumber, $cardcvv2);
-
-            if ($cardInventory > $productPrice) {
-
-                $paymentRepo->newPayment($productId, $userId);
-                return response()->json(['message' => 'عملیات پرداخت  با موفقیت انجام شد', "data" => $request->all()], 400);
-            } else {
-                return response()->json(['message' => 'موجودی حساب شما کمتر از مبلغ محصول هست', "data" => $request->all()], 400);
-            }
-        } else {
-            return response()->json(['message' => 'اطلاعات کارت شما اشتباه هست', "data" => $request->all()], 400);
-        }
+        return $paymentRepo->checkPayment($productId, $cardNumber, $cardcvv2, $userId);
 
     }
 

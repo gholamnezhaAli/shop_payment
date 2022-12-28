@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PaymentRequest;
+
 use App\Http\Resources\PaymentResource;
 use App\Http\Resources\ProductResource;
-use App\Repositories\CardRepo;
-use App\Repositories\PaymentRepo;
-use App\Repositories\ProductUserRepo;
-use App\Services\VerifyPaymentTimeService;
+
+
+use Gate\Http\Requests\PaymentRequest;
+use Gate\Repositories\CardRepo;
+use Gate\Repositories\PaymentRepo;
+use Gate\Repositories\ProductUserRepo;
+use Gate\Services\VerifyPaymentTimeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -77,12 +80,12 @@ class PaymentController extends ApiController
     public function getUserPayments(PaymentRepo $paymentRepo)
     {
 
-//        $userPayments = $paymentRepo->getUserPayment();
-//
-//
-//        return $this->successResponse(201, [
-//            "userPayments" => PaymentResource::collection($userPayments),
-//        ], "get user payments successfully");
+        $userPayments = $paymentRepo->getUserPayment();
+
+
+        return $this->successResponse(201, [
+            "userPayments" => PaymentResource::collection($userPayments),
+        ], "get user payments successfully");
 
 
     }

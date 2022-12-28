@@ -125,7 +125,7 @@
                                 </div>
                             </div>
 
-                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::time}}:00</span></div>
+                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::getMinute()}}:00</span></div>
 
 
                         </form>
@@ -148,8 +148,6 @@
             var expireTime = $('#expireTime').val();
             var userId = $('#userId').val();
             var productId = $('#productId').val();
-            alert(userId);
-            let data = {card_number: card_number, cvv2: cvv2, expireTime: expireTime, "userId": userId};
             $.post(route, {
                 _method: 'POST',
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -167,12 +165,7 @@
 
                     if (response.status == 400) {
 
-
                         var message = response.responseJSON.message;
-                        /* var message = response.responseJSON;
-                         console.log(message);*/
-
-
                         var div = "<div> " + message + "</div>"
                         $("#errors_show").append(div)
 
@@ -214,7 +207,7 @@
 
         window.onload = function () {
             var time = "{{\Gate\Models\Payment::time}}";
-            var fiveMinutes = 60 * time,
+            var fiveMinutes = 60 * "{{\Gate\Models\Payment::getMinute()}}",
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
         };

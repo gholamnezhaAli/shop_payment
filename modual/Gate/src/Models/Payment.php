@@ -2,6 +2,7 @@
 
 namespace Gate\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +15,13 @@ class Payment extends Model
     const STATUS_CANCELED = "canceled";
     const STATUS_SUCCESS = "success";
     const STATUS_FAIL = "fail";
-    const time = 1;
+    const time = 60 * 5;
+
+
+    public static function getMinute()
+    {
+        return self::time / 60;
+    }
 
     public static $statuses =
         [

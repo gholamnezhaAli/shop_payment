@@ -14,6 +14,7 @@ class Payment extends Model
     const STATUS_CANCELED = "canceled";
     const STATUS_SUCCESS = "success";
     const STATUS_FAIL = "fail";
+    const time = 1;
 
     public static $statuses =
         [

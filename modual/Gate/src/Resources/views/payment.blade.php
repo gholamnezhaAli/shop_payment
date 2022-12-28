@@ -6,9 +6,6 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">payment page</div>
-                    <div>{{$leftTime}}</div>
-                    <div>{{$productId}}</div>
-                    <div>{{$userId}}</div>
                     <div class="card-body">
 
 
@@ -116,26 +113,9 @@
                                 </div>
                             </div>
 
-                            {{--<div class="row mb-3">
-                                <label for="password"
-                                       class="col-md-4 col-form-label text-md-end">expire time</label>
-                                <div class="col-md-6">
-
-                                    @if(session()->has('message'))
-
-                                        <span class="invalid-feedback" role="alert">
-                                              <strong>{{ session()->get('message') }}</strong>
-                                         </span>
-                                    @endif
-                                </div>
-                            </div>--}}
-
 
                             <div class="row mb-0">
                                 <div class="col-md-8 offset-md-4">
-                                    {{--                                    <button type="submit" class="btn btn-primary">
-                                                                            buy
-                                                                        </button>--}}
 
                                     <a onclick="payment(event,'{{route('payment')}}')" class="btn btn-primary">
                                         buy
@@ -145,13 +125,19 @@
                                 </div>
                             </div>
 
+                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::time}}:00</span></div>
+
 
                         </form>
+
 
                     </div>
                 </div>
             </div>
+
         </div>
+
+
     </div>
     <script>
         function payment(event, route) {
@@ -205,12 +191,40 @@
                     }
                 );
         }
+
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var time = "{{\Gate\Models\Payment::time}}";
+            var fiveMinutes = 60 * time,
+                display = document.querySelector('#time');
+            startTimer(fiveMinutes, display);
+        };
     </script>
 
     <style>
         #errors_show div {
             color: red;
-
+        }
+        .box {
+            color: red;
+            font-size: 26px;
+            font-weight: 900;
         }
 
     </style>

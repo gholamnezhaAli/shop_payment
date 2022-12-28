@@ -3,9 +3,9 @@
 namespace Gate\Http\Controllers;
 
 
-
 use App\Http\Resources\PaymentResource;
 use Gate\Http\Requests\PaymentRequest;
+use Gate\Models\Payment;
 use Gate\Repositories\CardRepo;
 use Gate\Repositories\PaymentRepo;
 use Gate\Repositories\ProductUserRepo;
@@ -19,7 +19,7 @@ class PaymentController extends ApiController
     public function getPayment($productId, $userId)
     {
 
-        VerifyPaymentTimeService::store($userId, 60);
+        VerifyPaymentTimeService::store($userId, Payment::time);
 
         $leftTime = VerifyPaymentTimeService::get($userId);
 

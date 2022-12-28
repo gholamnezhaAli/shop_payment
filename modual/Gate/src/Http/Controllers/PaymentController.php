@@ -2,23 +2,27 @@
 
 namespace Gate\Http\Controllers;
 
-use Gate\Http\Requests\PaymentRequest;
+
+
 use App\Http\Resources\PaymentResource;
-use App\Http\Resources\ProductResource;
+use Gate\Http\Requests\PaymentRequest;
 use Gate\Repositories\CardRepo;
 use Gate\Repositories\PaymentRepo;
 use Gate\Repositories\ProductUserRepo;
 use Gate\Services\VerifyPaymentTimeService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+
 
 class PaymentController extends ApiController
 {
 
     public function getPayment($productId, $userId)
     {
-        VerifyPaymentTimeService::store($productId, 5);
-        $leftTime = VerifyPaymentTimeService::get($productId);
+
+        VerifyPaymentTimeService::store($userId, 60);
+
+        $leftTime = VerifyPaymentTimeService::get($userId);
+
 
         return view("Gate::payment", compact("leftTime", "productId", 'userId'));
 
@@ -28,17 +32,16 @@ class PaymentController extends ApiController
     {
 
 
-        return response()->json(['message' => 'عملیات با موفقیت انجام شد', "data" => $request->all()], Response::HTTP_OK);
-
-
         $productId = $request->productId;
         $cardNumber = $request->card_number;
         $cardcvv2 = $request->cvv2;
         $userId = $request->userId;
 
-        if (VerifyPaymentTimeService::check($productId)) {
-            session()->flash("message", "زمان 1 دقیقه شما به پایان رسیده ");
-            return back();
+
+        if (!VerifyPaymentTimeService::get($userId)) {
+
+            return response()->json(['message' => 'زمان 1 دقیقه شما به پایان رسیده', "data" => $userId], 400);
+
         }
 
         if ($productUserRepo->find($productId) && $cardRepo->getCard($cardNumber, $cardcvv2)) {
@@ -48,17 +51,12 @@ class PaymentController extends ApiController
             if ($cardInventory > $productPrice) {
 
                 $paymentRepo->newPayment($productId, $userId);
-                session()->flash("message", "تراکنش شما با موفقیت انجام شد ");
-                return back();
+                return response()->json(['message' => 'عملیات پرداخت  با موفقیت انجام شد', "data" => $request->all()], 400);
             } else {
-                session()->flash("message", "موجودی حساب شما کمتر از مبلغ محصول هست ");
-                return back();
+                return response()->json(['message' => 'موجودی حساب شما کمتر از مبلغ محصول هست', "data" => $request->all()], 400);
             }
-
         } else {
-
-            session()->flash("message", "اطلاعات کارت شما اشتباه هست ");
-            return back();
+            return response()->json(['message' => 'اطلاعات کارت شما اشتباه هست', "data" => $request->all()], 400);
         }
 
     }

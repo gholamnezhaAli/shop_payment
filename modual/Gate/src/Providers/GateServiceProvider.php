@@ -3,7 +3,8 @@
 namespace Gate\Providers;
 
 
-use Illuminate\Support\Facades\Gate;
+
+use Gate\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +15,10 @@ class GateServiceProvider extends ServiceProvider
 
     public function register()
     {
+
+        $this->app->singleton("Gate",function (){
+            return new Gate();
+        });
 
 
     }

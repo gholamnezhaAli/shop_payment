@@ -8,6 +8,7 @@
                     <div class="card-header">payment page</div>
                     <div>{{$leftTime}}</div>
                     <div>{{$productId}}</div>
+                    <div>{{$userId}}</div>
                     <div class="card-body">
 
 
@@ -99,18 +100,35 @@
                             </div>
 
                             <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input
+                                        id="userId"
+                                        type="hidden"
+                                        class="form-control @error('userId') is-invalid @enderror"
+                                        name="userId"
+                                        value="{{$userId}}"
+                                        required>
+                                    @error('userId')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{--<div class="row mb-3">
                                 <label for="password"
                                        class="col-md-4 col-form-label text-md-end">expire time</label>
                                 <div class="col-md-6">
 
                                     @if(session()->has('message'))
-                                        <h1>aaaaaaaaaaa</h1>
+
                                         <span class="invalid-feedback" role="alert">
                                               <strong>{{ session()->get('message') }}</strong>
                                          </span>
                                     @endif
                                 </div>
-                            </div>
+                            </div>--}}
 
 
                             <div class="row mb-0">
@@ -138,21 +156,49 @@
     <script>
         function payment(event, route) {
             event.preventDefault();
+            $("#errors_show div").remove();
             var card_number = $('#card_number').val();
             var cvv2 = $('#cvv2').val();
             var expireTime = $('#expireTime').val();
-            let data = {card_number: card_number, cvv2: cvv2, expireTime: expireTime};
-            $.post(route, {_method: 'POST', _token: $('meta[name="csrf-token"]').attr('content'), data: data})
+            var userId = $('#userId').val();
+            var productId = $('#productId').val();
+            alert(userId);
+            let data = {card_number: card_number, cvv2: cvv2, expireTime: expireTime, "userId": userId};
+            $.post(route, {
+                _method: 'POST',
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                card_number: card_number,
+                cvv2: cvv2,
+                expireTime: expireTime,
+                userId: userId,
+                productId: productId,
+            })
                 .done(function (response) {
-                    console.log("donedddd", response.errors)
+
                 })
                 .fail(function (response) {
 
-                    var errors = response.responseJSON.errors;
-                    $.each(errors, function (key, value) {
-                        var div = "<div> " + value + "</div>"
+
+                    if (response.status == 400) {
+
+
+                        var message = response.responseJSON.message;
+                        /* var message = response.responseJSON;
+                         console.log(message);*/
+
+
+                        var div = "<div> " + message + "</div>"
                         $("#errors_show").append(div)
-                    });
+
+                    } else if (response.status == 422) {
+                        var errors = response.responseJSON.errors;
+                        $.each(errors, function (key, value) {
+                            var div = "<div> " + value + "</div>"
+                            $("#errors_show").append(div)
+                        });
+
+                    }
+
                 })
                 .always(function () {
 

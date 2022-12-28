@@ -194,7 +194,8 @@
 
         function startTimer(duration, display) {
             var timer = duration, minutes, seconds;
-            setInterval(function () {
+
+            var timerfunc = setInterval(function () {
                 minutes = parseInt(timer / 60, 10);
                 seconds = parseInt(timer % 60, 10);
 
@@ -204,9 +205,11 @@
                 display.textContent = minutes + ":" + seconds;
 
                 if (--timer < 0) {
-                    timer = duration;
+                    clearInterval(timerfunc);
                 }
             }, 1000);
+
+
         }
 
         window.onload = function () {
@@ -221,6 +224,7 @@
         #errors_show div {
             color: red;
         }
+
         .box {
             color: red;
             font-size: 26px;

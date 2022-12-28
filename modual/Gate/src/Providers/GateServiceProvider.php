@@ -4,7 +4,10 @@ namespace Gate\Providers;
 
 
 
+use App\Repositories\ProductUserRepo;
 use Gate\Gate;
+use Gate\Repositories\CardRepo;
+use Gate\Repositories\PaymentRepo;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,6 +21,18 @@ class GateServiceProvider extends ServiceProvider
 
         $this->app->singleton("Gate",function (){
             return new Gate();
+        });
+
+        $this->app->singleton("PaymentRepo",function (){
+            return new PaymentRepo();
+        });
+
+        $this->app->singleton("CardRepo",function (){
+            return new CardRepo();
+        });
+
+        $this->app->singleton("ProductUserRepo",function (){
+            return new ProductUserRepo();
         });
 
 

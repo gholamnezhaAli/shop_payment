@@ -36,14 +36,17 @@ Route::get("/testali", function () {
 
     /*return MyGate::dosomething();*/
 
-  /* Cache::set("appName","aliGholamnezhad.com",60);
+    /* Cache::set("appName","aliGholamnezhad.com",60);
 
-   dd(Cache::get("appName"));*/
+     dd(Cache::get("appName"));*/
 
- // VerifyPaymentTimeService::store(1, 60);
+    // VerifyPaymentTimeService::store(1, 60);
 
 // dd(VerifyPaymentTimeService::get(1));
 
+    /*    \Gate\Facade\CardFacade*/
+
+    dd(\Gate\Facade\ProductUserFacade::find(1));
 
 });
 

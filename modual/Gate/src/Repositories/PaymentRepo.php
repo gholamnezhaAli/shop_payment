@@ -10,7 +10,6 @@ use Gate\Facade\ProductUserFacade;
 use Gate\Models\Payment;
 
 
-
 class PaymentRepo
 {
 
@@ -56,6 +55,12 @@ class PaymentRepo
     {
 
 
+        $is_purchased = $this->is_purchased($userId, $productId);
+
+        if ($is_purchased)
+            return response()->json(['message' => 'کاربر این محصول را قبلا خریداری کرده'], 400);
+
+
         $is_product = ProductUserFacade::find($productId);
         $is_card = CardFacade::getCard($cardNumber, $cardcvv2);
 
@@ -64,9 +69,13 @@ class PaymentRepo
 
             $productPrice = ProductUserFacade::getProductPrice($productId);
             $cardInventory = CardFacade::getCardInventory($cardNumber, $cardcvv2);
+
             if ($cardInventory > $productPrice) {
 
                 PaymentFacade::newPayment($productId, $userId);
+                ProductUserFacade::reduceProductQuantity($productId);
+                CardFacade::reduceCardInventory($cardNumber, $cardcvv2, $productPrice);
+
 
                 return response()->json(['message' => 'عملیات پرداخت  با موفقیت انجام شد'], 400);
             } else {
@@ -76,6 +85,13 @@ class PaymentRepo
             return response()->json(['message' => 'اطلاعات کارت شما اشتباه هست'], 400);
         }
 
+    }
+
+    public function is_purchased($user_id, $product_id)
+    {
+        return $this->query->where("user_id", $user_id)
+            ->where("product_id", $product_id)
+            ->where("status", Payment::STATUS_SUCCESS)->first();
     }
 
 

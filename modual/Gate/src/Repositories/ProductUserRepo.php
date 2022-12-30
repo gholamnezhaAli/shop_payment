@@ -49,4 +49,17 @@ class ProductUserRepo
 
     }
 
+    public function reduceProductQuantity($productId)
+    {
+
+        $product = $this->find($productId);
+
+        $product->update([
+            "quantity" => ($product->quantity - 1)
+        ]);
+    }
+
+
+
+
 }

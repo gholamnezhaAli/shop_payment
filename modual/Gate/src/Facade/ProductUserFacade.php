@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static  getProductPrice($productId)
  * @method static   getProducts()
  * @method static   newProduct($request)
+ * @method static   reduceProductQuantity($productId)
 
  * @see \Gate\Facade\
  */

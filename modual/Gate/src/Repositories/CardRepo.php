@@ -28,5 +28,16 @@ class CardRepo
         return $this->getCard($cardNumber, $cvv2)->inventory;
     }
 
+    public function reduceCardInventory($cardNumber, $cvv2 ,$productPrice)
+    {
+        $card = $this->getCard($cardNumber, $cvv2);
+
+        $this->query->update([
+
+            "inventory"=> ($card->inventory - $productPrice)
+
+        ]);
+    }
+
 
 }

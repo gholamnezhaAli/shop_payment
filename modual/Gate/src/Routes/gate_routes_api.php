@@ -17,4 +17,5 @@ Route::prefix("api/admin")->middleware("auth:api")->group(function () {
     Route::get("/payment/user", [PaymentController::class, "getUserPayments"]);
 
 
+
 });

@@ -3,9 +3,8 @@
 namespace Gate\Http\Controllers;
 
 
-use App\Http\Resources\ProductResource;
+use Gate\Http\Resources\ProductResource;
 use Gate\Facade\ProductUserFacade;
-use Gate\Repositories\ProductUserRepo;
 use Illuminate\Http\Request;
 
 class ProductController extends ApiController

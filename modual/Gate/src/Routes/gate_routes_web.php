@@ -3,7 +3,6 @@
 
 use Gate\Http\Controllers\HomeController;
 use Gate\Http\Controllers\PaymentController;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/payment/{productId}/{userId}", [PaymentController::class, "getPayment"])

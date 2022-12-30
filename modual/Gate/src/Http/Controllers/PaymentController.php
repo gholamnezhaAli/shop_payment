@@ -3,13 +3,12 @@
 namespace Gate\Http\Controllers;
 
 
-use App\Http\Resources\PaymentResource;
+use Gate\Http\Resources\PaymentResource;
 use Gate\Facade\PaymentFacade;
 use Gate\Http\Requests\PaymentRequest;
 use Gate\Models\Payment;
-use Gate\Repositories\PaymentRepo;
 use Gate\Services\VerifyPaymentTimeService;
-use Illuminate\Support\Facades\Route;
+
 
 
 class PaymentController extends ApiController

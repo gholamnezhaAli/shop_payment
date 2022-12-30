@@ -3,9 +3,6 @@
 namespace Gate\Repositories;
 
 use Gate\Models\Product;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 
 class ProductUserRepo
 {

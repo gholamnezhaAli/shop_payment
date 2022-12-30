@@ -5,9 +5,12 @@ namespace Gate\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class GateFacade
- * @method static string doSomething()
- * @see \Gate\Gate
+ * @method static  find($productId)
+ * @method static  getProductPrice($productId)
+ * @method static   getProducts()
+ * @method static   newProduct($request)
+
+ * @see \Gate\Facade\
  */
 class ProductUserFacade extends Facade
 {

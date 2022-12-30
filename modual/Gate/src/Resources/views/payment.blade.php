@@ -7,8 +7,6 @@
                 <div class="card">
                     <div class="card-header">payment page</div>
                     <div class="card-body">
-
-
                         <form method="POST" action="{{ route('payment') }}">
 
                             @csrf
@@ -129,8 +127,6 @@
 
 
                         </form>
-
-
                     </div>
                 </div>
             </div>

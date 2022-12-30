@@ -174,7 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Gate\Providers\GateServiceProvider::class,
+        \Gate\Providers\GateServiceProvider::class,
 
 
     ],
@@ -230,7 +230,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        "MyGate" => Gate\Facade\GateFacade::class,
+        "Product" => \Gate\Facade\ProductUserFacade::class,
+        "Card" => \Gate\Facade\CardFacade::class,
+        "Payment" => \Gate\Facade\PaymentFacade::class,
 
     ],
 

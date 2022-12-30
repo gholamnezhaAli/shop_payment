@@ -3,9 +3,7 @@
 namespace Gate\Repositories;
 
 use Gate\Models\Card;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
+
 
 class CardRepo
 {

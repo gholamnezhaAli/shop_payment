@@ -4,13 +4,12 @@ namespace Gate\Http\Controllers;
 
 
 use App\Http\Resources\PaymentResource;
+use Gate\Facade\PaymentFacade;
 use Gate\Http\Requests\PaymentRequest;
 use Gate\Models\Payment;
-use Gate\Repositories\CardRepo;
 use Gate\Repositories\PaymentRepo;
-use Gate\Repositories\ProductUserRepo;
 use Gate\Services\VerifyPaymentTimeService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 
 class PaymentController extends ApiController
@@ -21,15 +20,13 @@ class PaymentController extends ApiController
 
         VerifyPaymentTimeService::store($userId, Payment::time);
 
-        $leftTime = VerifyPaymentTimeService::get($userId);
-
-
-        return view("Gate::payment", compact("leftTime", "productId", 'userId'));
+        return view("Gate::payment", compact("productId", 'userId'));
 
     }
 
-    public function postPayment(PaymentRequest $request, PaymentRepo $paymentRepo)
+    public function postPayment(PaymentRequest $request)
     {
+
 
         $productId = $request->productId;
         $cardNumber = $request->card_number;
@@ -38,28 +35,29 @@ class PaymentController extends ApiController
 
 
         if (VerifyPaymentTimeService::get($userId) === null) {
-            return response()->json(['message' => 'زمان '.\Gate\Models\Payment::getMinute().' دقیقه شما به پایان رسیده', "data" => $userId], 400);
+
+            return response()->json(['message' => 'زمان ' . Payment::getMinute() . ' دقیقه شما به پایان رسیده', "data" => $userId], 400);
         }
 
-        return $paymentRepo->checkPayment($productId, $cardNumber, $cardcvv2, $userId);
+        return PaymentFacade::checkPayment($productId, $cardNumber, $cardcvv2, $userId);
 
     }
 
 
-    public function getPayments(PaymentRepo $paymentRepo)
+    public function getPayments()
     {
 
-        $payments = $paymentRepo->getPayments();
+        $payments = PaymentFacade::getPayments();
         return $this->successResponse(201, [
             "products" => $payments,
         ], "get  payments successfully");
 
     }
 
-    public function getUserPayments(PaymentRepo $paymentRepo)
+    public function getUserPayments()
     {
 
-        $userPayments = $paymentRepo->getUserPayment();
+        $userPayments = PaymentFacade::getUserPayment();
 
 
         return $this->successResponse(201, [

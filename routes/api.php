@@ -25,17 +25,6 @@ use Illuminate\Support\Facades\Route;
 Route::post("register", [AuthController::class, "register"]);
 Route::post("login", [AuthController::class, "login"]);
 
-Route::get("payments", [PaymentController::class, "getPayments"]);
 
-Route::prefix("admin")->middleware("auth:api")->group(function () {
-
-
-    Route::apiResource("products", ProductController::class);
-    Route::get("/payment/user",[PaymentController::class, "getUserPayments"]);
-
-
-
-
-});
 
 

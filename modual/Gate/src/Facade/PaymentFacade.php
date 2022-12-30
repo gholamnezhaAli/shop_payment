@@ -5,9 +5,12 @@ namespace Gate\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class GateFacade
- * @method static string doSomething()
- * @see \Gate\Gate
+ * @method static   getUserPayment()
+ * @method static   getPayments()
+ * @method static   checkPayment($productId, $cardNumber, $cardcvv2, $userId)
+ * @method static   newPayment($productId, $userId)
+ * =
+ * @see \Gate\Facade\
  */
 class PaymentFacade extends Facade
 {

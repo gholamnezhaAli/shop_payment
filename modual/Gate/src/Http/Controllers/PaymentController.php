@@ -3,42 +3,123 @@
 namespace Gate\Http\Controllers;
 
 
+use Carbon\Carbon;
+
+use Dflydev\DotAccessData\Data;
 use Gate\Http\Resources\PaymentResource;
 use Gate\Facade\PaymentFacade;
 use Gate\Http\Requests\PaymentRequest;
 use Gate\Models\Payment;
 use Gate\Services\VerifyPaymentTimeService;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class PaymentController extends ApiController
 {
 
-    public function getPayment($productId, $userId)
+    public function invalidToken()
     {
+        return view("Gate::invalid_token");
+    }
 
-        VerifyPaymentTimeService::store($userId, Payment::time);
+    public function buy(Request $request)
+    {
+        $procut_id = $request->product_id;
+        $user_id = auth()->id();
+        $result = PaymentFacade::createToken();
 
-        return view("Gate::payment", compact("productId", 'userId'));
+        if ($result["status"]) {
+
+            PaymentFacade::newPayment($procut_id, $user_id, $result["token"]);
+
+            $link = "http://127.0.0.1:8000/payment/tokens/" . $result["token"];
+
+            return $this->successResponse(201, [
+                "link" => $link,
+            ], "get  product buy link successfully");
+
+
+        } else {
+
+            return $this->errorResponse(422, "not crated token successfully");
+        }
 
     }
+
+
+    public function getPayment($token)
+    {
+
+
+        $payment = PaymentFacade::getPayment($token);
+
+
+        if (!is_null($payment)) {
+
+            if (($payment->status === Payment::STATUS_CANCELED)
+                || ($payment->status === Payment::STATUS_FAIL)
+                || ($payment->status === Payment::STATUS_SUCCESS)
+            ) {
+
+                $mess = "your token is " . $payment->status;
+                return view("Gate::invalid_token", compact("mess"));
+
+            } else if ($payment->status === Payment::STATUS_PENDING) {
+
+                /*$tt = Carbon::createFromFormat('Y-m-d H:i:s', $payment->expire_at)->format('H:i:s');
+                 dd($tt);*/
+
+                $expireTime = $payment->expire_at;
+                $expireTime = Carbon::parse($expireTime);
+                /* dd($expireTime->format("H:i:s"));*/
+                $currentTime = Carbon::now();
+                $currentTime = Carbon::parse($currentTime);
+
+
+                if (!$currentTime->greaterThan($expireTime)) {
+
+                    $leftTime = $currentTime->diffInSeconds($expireTime);
+                    Payment::$time = $leftTime;
+
+                    return view("Gate::payment", compact("token"));
+
+                    /* dd("you have time still", gmdate('H:i:s', $leftTime));*/
+
+
+                } else {
+
+                    $mess = "your token is expired";
+
+                    return view("Gate::invalid_token", compact("mess"));
+
+                    /* dd("expired", gmdate('H:i:s', $leftTime));*/
+                }
+
+
+                /* dd($currentTime->format("H:i:s"), $expireTime->format("H:i:s"), gmdate('H:i:s', $leftTime));*/
+
+
+            }
+
+        } else {
+            $mess = "token not exist in payment table";
+
+            return view("Gate::invalid_token", compact("mess"));
+
+        }
+    }
+
 
     public function postPayment(PaymentRequest $request)
     {
 
-
-        $productId = $request->productId;
+        $token = $request->token;
         $cardNumber = $request->card_number;
         $cardcvv2 = $request->cvv2;
-        $userId = $request->userId;
 
 
-        if (VerifyPaymentTimeService::get($userId) === null) {
-
-            return response()->json(['message' => 'زمان ' . Payment::getMinute() . ' دقیقه شما به پایان رسیده', "data" => $userId], 400);
-        }
-
-        return PaymentFacade::checkPayment($productId, $cardNumber, $cardcvv2, $userId);
+        return PaymentFacade::checkPayment($token, $cardNumber, $cardcvv2);
 
     }
 
@@ -53,15 +134,34 @@ class PaymentController extends ApiController
 
     }
 
+
     public function getUserPayments()
     {
 
         $userPayments = PaymentFacade::getUserPayment();
 
-
         return $this->successResponse(201, [
             "userPayments" => PaymentResource::collection($userPayments),
         ], "get user payments successfully");
+
+
+    }
+
+    public function updatePayment(Request $request)
+    {
+
+
+        //    return redirect(route("get.payment.invalid.token"));
+
+        $token = $request->token;
+        $status = $request->status;
+
+        PaymentFacade::updatePayment($token, $status);
+
+       // $mess = "time out and your payment is failed";
+
+        return response()->json(['route' => route("get.payment.invalid.token")], 200);
+
 
 
     }

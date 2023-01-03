@@ -14,7 +14,7 @@ class PaymentResource extends JsonResource
             "id" => $this->id,
             "product" => new ProductResource($this->product),
             "amount" => $this->amount,
-            "invoice_id" => $this->invoice_id,
+            "token" => $this->token,
             "status" => $this->status,
         ];
     }

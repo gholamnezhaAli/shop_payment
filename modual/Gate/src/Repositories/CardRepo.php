@@ -18,8 +18,11 @@ class CardRepo
     public function getCard($cardNumber, $cvv2)
     {
 
-        return $this->query->where("card_number", $cardNumber)
-            ->where("cvv2", $cvv2)->first();
+        return $this->query
+            ->where("card_number", $cardNumber)
+            ->where("cvv2", $cvv2)
+            ->with("user")
+            ->first();
     }
 
     public function getCardInventory($cardNumber, $cvv2)
@@ -32,7 +35,9 @@ class CardRepo
     {
         $card = $this->getCard($cardNumber, $cvv2);
 
-        $this->query->update([
+
+
+        $card->update([
 
             "inventory"=> ($card->inventory - $productPrice)
 

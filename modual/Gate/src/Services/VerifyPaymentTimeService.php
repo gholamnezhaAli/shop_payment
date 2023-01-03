@@ -3,20 +3,30 @@
 namespace Gate\Services;
 
 
+use Carbon\Carbon;
+
 class VerifyPaymentTimeService
 {
 
-    private static $prefix = 'payment_time_';
 
 
-    public static function store($userId, $time)
+    private static $prefix = '_verify_code_';
+
+
+    public static function generate()
     {
-        cache()->set(self::$prefix . $userId, $userId, $time);
+        return Carbon::now()->timestamp;
+
     }
 
-    public static function get($userId)
+    public static function store($token, $code, $time)
     {
-        return cache()->get(self::$prefix . $userId);
+        cache()->put(self::$prefix . $token, $code, $time);
+    }
+
+    public static function get($token)
+    {
+        return cache()->get(self::$prefix . $token);
     }
 
     public static function delete($userId)
@@ -27,20 +37,22 @@ class VerifyPaymentTimeService
     public static function check($userId)
     {
 
-      if (cache()->has(self::$prefix . $userId)) {
+        if (cache()->has(self::$prefix . $userId)) {
             self::delete($userId);
             return true;
         }
         return false;
 
-       /* if (self::get($userId) != $userId) return false;
+        /* if (self::get($userId) != $userId) return false;
 
-        self::delete($userId);
+         self::delete($userId);
 
-        return true;*/
+         return true;*/
 
 
     }
+
+
 
 
 }

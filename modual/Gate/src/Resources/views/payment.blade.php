@@ -77,39 +77,39 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <input
-                                        id="productId"
-                                        type="hidden"
-                                        class="form-control @error('productId') is-invalid @enderror"
-                                        name="productId"
-                                        value="{{$productId}}"
-                                        required>
-                                    @error('productId')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{--  <div class="row mb-3">
+                                  <div class="col-md-6">
+                                      <input
+                                          id="productId"
+                                          type="hidden"
+                                          class="form-control @error('productId') is-invalid @enderror"
+                                          name="productId"
+                                          value="{{$productId}}"
+                                          required>
+                                      @error('productId')
+                                      <span class="invalid-feedback" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                      @enderror
+                                  </div>
+                              </div>--}}
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <input
-                                        id="userId"
-                                        type="hidden"
-                                        class="form-control @error('userId') is-invalid @enderror"
-                                        name="userId"
-                                        value="{{$userId}}"
-                                        required>
-                                    @error('userId')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{--  <div class="row mb-3">
+                                  <div class="col-md-6">
+                                      <input
+                                          id="userId"
+                                          type="hidden"
+                                          class="form-control @error('userId') is-invalid @enderror"
+                                          name="userId"
+                                          value="{{$userId}}"
+                                          required>
+                                      @error('userId')
+                                      <span class="invalid-feedback" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                      @enderror
+                                  </div>
+                              </div>--}}
 
 
                             <div class="row mb-0">
@@ -123,7 +123,20 @@
                                 </div>
                             </div>
 
-                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::getMinute()}}:00</span></div>
+                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::getMinute()}}:00</span>
+                            </div>
+
+
+                            <div class="row mb-0">
+                                <div class="col-md-8 offset-md-4">
+
+                                    <a onclick="paymentUpdate(event)" class="btn btn-primary">
+                                        buy
+                                    </a>
+
+
+                                </div>
+                            </div>
 
 
                         </form>
@@ -136,22 +149,21 @@
 
     </div>
     <script>
+
         function payment(event, route) {
             event.preventDefault();
             $("#errors_show div").remove();
             var card_number = $('#card_number').val();
             var cvv2 = $('#cvv2').val();
             var expireTime = $('#expireTime').val();
-            var userId = $('#userId').val();
-            var productId = $('#productId').val();
             $.post(route, {
                 _method: 'POST',
                 _token: $('meta[name="csrf-token"]').attr('content'),
+                token: '{{$token}}',
                 card_number: card_number,
                 cvv2: cvv2,
                 expireTime: expireTime,
-                userId: userId,
-                productId: productId,
+
             })
                 .done(function (response) {
 
@@ -176,10 +188,10 @@
 
                 })
                 .always(function () {
+                });
 
-                    }
-                );
-        }
+
+        };
 
         function startTimer(duration, display) {
             var timer = duration, minutes, seconds;
@@ -195,20 +207,42 @@
 
                 if (--timer < 0) {
                     clearInterval(timerfunc);
+                    paymentUpdate();
                 }
             }, 1000);
 
 
-        }
+        };
+
+        function paymentUpdate() {
+            var route = '{{route("post.payment.update")}}';
+            var status = '{{\Gate\Models\Payment::STATUS_FAIL}}';
+            $.post(route, {
+                _method: 'POST',
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                status: status,
+                token: '{{$token}}',
+            })
+                .done(function (response) {
+
+                  window.location.href = response.route;
+                })
+                .fail(function (response) {
+                    alert("notOk")
+                })
+                .always(function () {
+                });
+        };
 
         window.onload = function () {
-            var time = "{{\Gate\Models\Payment::time}}";
+            var time = "{{\Gate\Models\Payment::$time}}";
             var fiveMinutes = 60 * "{{\Gate\Models\Payment::getMinute()}}",
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
         };
-    </script>
 
+
+    </script>
     <style>
         #errors_show div {
             color: red;

@@ -19,7 +19,7 @@ class CreatePaymentsTable extends Migration
             $table->foreignId('user_id');
             $table->foreignId('product_id');
             $table->string('amount', 10);
-            $table->string('invoice_id');
+            $table->string('token');
             $table->enum('status', Payment::$statuses);
 
             $table->foreign('user_id')
@@ -31,6 +31,8 @@ class CreatePaymentsTable extends Migration
                 ->references('id')
                 ->on('products')
                 ->onDelete('cascade');
+
+            $table->timestamp('expire_at');
 
             $table->timestamps();
 

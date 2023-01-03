@@ -53,7 +53,6 @@ class ProductUserRepo
     {
 
         $product = $this->find($productId);
-
         $product->update([
             "quantity" => ($product->quantity - 1)
         ]);

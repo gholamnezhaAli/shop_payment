@@ -12,23 +12,31 @@ class Payment extends Model
 
     protected $guarded = [];
 
+    const STATUS_PENDING = "pending";
     const STATUS_CANCELED = "canceled";
     const STATUS_SUCCESS = "success";
     const STATUS_FAIL = "fail";
-    const time = 60 * 5;
+
+    public static $time = 60 * 1;
+    public static $token;
 
 
     public static function getMinute()
     {
-        return self::time / 60;
+         return static::$time / 60;
+
     }
+
 
     public static $statuses =
         [
             self::STATUS_CANCELED,
             self::STATUS_SUCCESS,
-            self::STATUS_FAIL
+            self::STATUS_FAIL,
+            self::STATUS_PENDING
+
         ];
+
 
     public function user()
     {
@@ -41,5 +49,6 @@ class Payment extends Model
         return $this->belongsTo(Product::class);
 
     }
+
 
 }

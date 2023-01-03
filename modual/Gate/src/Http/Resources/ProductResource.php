@@ -14,7 +14,7 @@ class ProductResource extends JsonResource
             "name" => $this->name,
             "slug" => $this->slug,
             "description" => $this->description,
-            "link" => url("http://localhost:8000/payment/" . $this->id.'/'.$this->user->id),
+            "link" => url("http://localhost:8000/payment/product/" . $this->id),
             "price" => $this->price,
             "quantity" => $this->quantity,
         ];

@@ -3,6 +3,8 @@
 namespace Gate\Http\Requests;
 
 use Carbon\Carbon;
+use Gate\Rules\ValidCvv2WithCardNumberRule;
+use Gate\Rules\ValidTokenRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PaymentRequest extends FormRequest
@@ -25,10 +27,9 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            "userId" => "required|integer|exists:users,id",
-            "productId" => "required|integer|exists:products,id",
+            "token" => ["required","exists:payments,token", new ValidTokenRule()],
             "card_number" => "required|exists:cards,card_number",
-            "cvv2" => "required|exists:cards,cvv2",
+            "cvv2" => ["required", "exists:cards,cvv2", new ValidCvv2WithCardNumberRule()],
             'expireTime' => 'required|after:' . Carbon::now()->format('H:i:s'),
 
         ];

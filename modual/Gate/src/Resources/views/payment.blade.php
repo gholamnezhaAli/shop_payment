@@ -77,39 +77,6 @@
                                 </div>
                             </div>
 
-                            {{--  <div class="row mb-3">
-                                  <div class="col-md-6">
-                                      <input
-                                          id="productId"
-                                          type="hidden"
-                                          class="form-control @error('productId') is-invalid @enderror"
-                                          name="productId"
-                                          value="{{$productId}}"
-                                          required>
-                                      @error('productId')
-                                      <span class="invalid-feedback" role="alert">
-                                          <strong>{{ $message }}</strong>
-                                      </span>
-                                      @enderror
-                                  </div>
-                              </div>--}}
-
-                            {{--  <div class="row mb-3">
-                                  <div class="col-md-6">
-                                      <input
-                                          id="userId"
-                                          type="hidden"
-                                          class="form-control @error('userId') is-invalid @enderror"
-                                          name="userId"
-                                          value="{{$userId}}"
-                                          required>
-                                      @error('userId')
-                                      <span class="invalid-feedback" role="alert">
-                                          <strong>{{ $message }}</strong>
-                                      </span>
-                                      @enderror
-                                  </div>
-                              </div>--}}
 
 
                             <div class="row mb-0">
@@ -123,19 +90,8 @@
                                 </div>
                             </div>
 
-                            <div class="box">left time <span id="time">{{\Gate\Models\Payment::getMinute()}}:00</span>
-                            </div>
-
-
-                            <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4">
-
-                                    <a onclick="paymentUpdate(event)" class="btn btn-primary">
-                                        buy
-                                    </a>
-
-
-                                </div>
+                            {{--   <div class="box">left time <span id="time">{{ \Gate\Models\Payment::getMinute()}}</span>--}}
+                            <div class="box">left time <span id="time"></span>
                             </div>
 
 
@@ -166,7 +122,8 @@
 
             })
                 .done(function (response) {
-
+                    console.log(response);
+                    window.location.href = '{{route("get.payment.success")}}';
                 })
                 .fail(function (response) {
 
@@ -224,8 +181,7 @@
                 token: '{{$token}}',
             })
                 .done(function (response) {
-
-                  window.location.href = response.route;
+                    window.location.href = response.route;
                 })
                 .fail(function (response) {
                     alert("notOk")
@@ -235,7 +191,6 @@
         };
 
         window.onload = function () {
-            var time = "{{\Gate\Models\Payment::$time}}";
             var fiveMinutes = 60 * "{{\Gate\Models\Payment::getMinute()}}",
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);

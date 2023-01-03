@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static newPayment($productId, $userId, $tokenId)
  * @method static updatePayment($token,$status)
  * @method static createToken()
+ * @method static is_pending($status)
+ * @method static is_expired($expire_at)
  * =
  * @see \Gate\Facade\
  */

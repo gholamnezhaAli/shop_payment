@@ -23,6 +23,11 @@ class PaymentController extends ApiController
         return view("Gate::invalid_token");
     }
 
+    public function successPayment()
+    {
+        return view("Gate::successPayment");
+    }
+
     public function buy(Request $request)
     {
         $procut_id = $request->product_id;
@@ -57,32 +62,20 @@ class PaymentController extends ApiController
 
         if (!is_null($payment)) {
 
-            if (($payment->status === Payment::STATUS_CANCELED)
-                || ($payment->status === Payment::STATUS_FAIL)
-                || ($payment->status === Payment::STATUS_SUCCESS)
-            ) {
-
-                $mess = "your token is " . $payment->status;
-                return view("Gate::invalid_token", compact("mess"));
-
-            } else if ($payment->status === Payment::STATUS_PENDING) {
+            if (PaymentFacade::is_pending($payment->status)) {
 
                 /*$tt = Carbon::createFromFormat('Y-m-d H:i:s', $payment->expire_at)->format('H:i:s');
-                 dd($tt);*/
-
-                $expireTime = $payment->expire_at;
-                $expireTime = Carbon::parse($expireTime);
-                /* dd($expireTime->format("H:i:s"));*/
-                $currentTime = Carbon::now();
-                $currentTime = Carbon::parse($currentTime);
+                   dd($tt);*/
 
 
-                if (!$currentTime->greaterThan($expireTime)) {
+                if (is_array(PaymentFacade::is_expired($payment->expire_at))) {
 
-                    $leftTime = $currentTime->diffInSeconds($expireTime);
+                    $leftTime = PaymentFacade::is_expired($payment->expire_at)["left_time"];
+
                     Payment::$time = $leftTime;
 
                     return view("Gate::payment", compact("token"));
+
 
                     /* dd("you have time still", gmdate('H:i:s', $leftTime));*/
 
@@ -99,6 +92,10 @@ class PaymentController extends ApiController
 
                 /* dd($currentTime->format("H:i:s"), $expireTime->format("H:i:s"), gmdate('H:i:s', $leftTime));*/
 
+
+            } else {
+                $mess = "your token is " . $payment->status;
+                return view("Gate::invalid_token", compact("mess"));
 
             }
 
@@ -158,10 +155,9 @@ class PaymentController extends ApiController
 
         PaymentFacade::updatePayment($token, $status);
 
-       // $mess = "time out and your payment is failed";
+        // $mess = "time out and your payment is failed";
 
         return response()->json(['route' => route("get.payment.invalid.token")], 200);
-
 
 
     }

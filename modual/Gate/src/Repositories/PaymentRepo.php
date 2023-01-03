@@ -83,7 +83,6 @@ class PaymentRepo
         $product_id = $this->getPayment($token)->product->id;
 
 
-
         $is_purchased = $this->is_purchased($user_id, $product_id);
 
 
@@ -101,7 +100,7 @@ class PaymentRepo
 
                 CardFacade::reduceCardInventory($cardNumber, $cardcvv2, $productPrice);
 
-                return response()->json(['message' => 'عملیات پرداخت  با موفقیت انجام شد'], 400);
+                return response()->json(['message' => 'عملیات پرداخت  با موفقیت انجام شد'], 200);
 
             } else {
 
@@ -133,6 +132,31 @@ class PaymentRepo
         ]);
 
 
+    }
+
+    public function is_pending($status)
+    {
+
+        if (($status === Payment::STATUS_PENDING))
+            return true;
+        return false;
+    }
+
+    public function is_expired($expire_at)
+    {
+
+        $expireTime = $expire_at;
+        $expireTime = Carbon::parse($expireTime);
+        /* dd($expireTime->format("H:i:s"));*/
+        $currentTime = Carbon::now();
+        $currentTime = Carbon::parse($currentTime);
+
+
+        if (!$currentTime->greaterThan($expireTime)) {
+            $leftTime = $currentTime->diffInSeconds($expireTime);
+            return ["status" => false, "left_time" => $leftTime];
+        }
+        return true;
     }
 
 

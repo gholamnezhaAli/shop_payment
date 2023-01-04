@@ -10,6 +10,7 @@ use Gate\Facade\ProductUserFacade;
 use Gate\Models\Card;
 use Gate\Models\Payment;
 use Gate\Traits\ApiResponse;
+use Illuminate\Support\Str;
 
 
 class PaymentRepo
@@ -26,7 +27,7 @@ class PaymentRepo
 
     public function createToken()
     {
-        $token = Carbon::now()->microsecond;
+        $token = md5(Str::uuid() . auth()->id() );
 
         if ($token) return ["status" => true, "token" => $token];
         return ["status" => false, "token" => null];
@@ -147,7 +148,7 @@ class PaymentRepo
 
         $expireTime = $expire_at;
         $expireTime = Carbon::parse($expireTime);
-        /* dd($expireTime->format("H:i:s"));*/
+
         $currentTime = Carbon::now();
         $currentTime = Carbon::parse($currentTime);
 

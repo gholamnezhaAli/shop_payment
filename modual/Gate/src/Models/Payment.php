@@ -66,5 +66,9 @@ class Payment extends Model
 
     }
 
+    public function setExpiredAtAttribute()
+    {
+        $this->attributes["expired_at"] = now();
+    }
 
 }

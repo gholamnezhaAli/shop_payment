@@ -19,7 +19,7 @@ class CreatePaymentsTable extends Migration
             $table->foreignId('user_id');
             $table->foreignId('product_id');
             $table->string('amount', 10);
-            $table->string('token');
+            $table->string('token' , 15);
             $table->enum('status', Payment::$statuses);
 
             $table->foreign('user_id')
